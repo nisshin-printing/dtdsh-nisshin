@@ -32,11 +32,9 @@ function change_jetpack_publicize_content( $post_id, $post ) {
 		return;
 	}
 	if ( get_post_meta( $post_id, $POST_MESS, TRUE ) ) {
-		return
+		return;
 	}
-	$publicize_custom_message = '弁護士ブログランキングに参加しています！
-ブログを開いて「弁護士」バナーをポチッと！
-押していただけると嬉しいです。(^_^)/';
+	$publicize_custom_message = '弁護士ブログランキングに参加しています！ブログを開いて「弁護士」バナーをポチッと！押していただけると嬉しいです。(^_^)/';
 	update_post_meta( $post_id, $POST_MESS, $publicize_custom_message );
 	$_POST['wpas_title'] = $publicize_custom_message;
 }
@@ -48,7 +46,7 @@ function dtdsh_load_ogp() {
 	global $post;
 	$url = '';
 	$title = wp_get_document_title();
-	$site_name = bloginfo( 'name' );
+	$site_name = get_bloginfo( 'name' );
 	if ( is_singular() ) {
 		$cont = $post->post_content;
 		$preg = '/<img.*?src=(["\'])(.+?)\1.*?>i/';
@@ -63,11 +61,11 @@ function dtdsh_load_ogp() {
 			$img = null;
 		}
 	} else {
-		$url = bloginfo( 'url' );
+		$url = get_bloginfo( 'url' );
 		$title = $site_name;
 		$img = null;
 	}
-	$img = ( $img != null ) ? $img : 'http://www.law-yamashita.com/wp-content/uploads/2015/05/k-yamashita.png'
+	$img = ( $img != null ) ? $img : 'http://www.law-yamashita.com/wp-content/uploads/2015/05/k-yamashita.png';
 	$desc = '弁護士ブログランキングに参加しています！ブログを開いて「弁護士」バナーをポチッと！押していただけると嬉しいです。(^_^)/';
 ?>
 <meta property="og:type" content="<?php echo ( is_singular() ? 'article' : 'website' ); ?>">

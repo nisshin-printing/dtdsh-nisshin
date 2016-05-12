@@ -41,6 +41,20 @@ function change_jetpack_publicize_content( $post_id, $post ) {
 add_action( 'save_post', 'change_jetpack_publicize_content', 19, 2 );
 endif;
 // ============================== 独自OGP導入 ============================================================================= //
+if ( ! function_exists( 'dtd_catch_content_img' ) ) :
+function dtd_catch_content_img() {
+	global $post, $posts;
+	$first_img = '';
+	ob_start();
+	ob_end_clean();
+	$output = preg_match_all( '/<img.+src=[\'"]([^\'"]+(?:[jge?g|png]))[\'"].*>/i', $post->post_content, $matches );
+	$first_img = $matches[1][0];
+	if ( empty( $first_img ) ) {
+		$first_img = 'none';
+	}
+	return $first_img;
+}
+endif;
 if ( ! function_exists( 'dtdsh_load_ogp' ) && ! is_admin() ) :
 function dtdsh_load_ogp() {
 	global $post;
@@ -49,14 +63,13 @@ function dtdsh_load_ogp() {
 	$site_name = get_bloginfo( 'name' );
 	if ( is_singular() ) {
 		$cont = $post->post_content;
-		$preg = '/<img.*?src=(["\'])(.+?)\1.*?>i/';
 		$url = get_the_permalink();
 		if ( has_post_thumbnail() ) {
 			$img_id = get_post_thumbnail_id();
 			$img_arr = wp_get_attachment_image_src( $img_id, 'full' );
 			$img = $img_arr[0];
-		} elseif ( preg_match( $preg, $cont, $img_url ) ) {
-			$img = $img_url[2];
+		} elseif ( dtd_catch_content_img() != 'none' ) {
+			$img = dtd_catch_content_img();
 		} else {
 			$img = null;
 		}

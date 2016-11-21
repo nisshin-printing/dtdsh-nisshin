@@ -21,6 +21,23 @@ define( 'DTDSH_PLUGIN_CSS', DTDSH_PLUGIN_URL . 'assets/css/' );
 define( 'DTDSH_PLUGIN_JS', DTDSH_PLUGIN_URL . 'assets/js/' );
 define( 'DTDSH_PLUGIN_INC', DTDSH_PLUGIN_DIR . '/inc/' );
 
+// ============================== Google Tag Manager Install ============================================================================= //
+if ( ! function_exists( 'google_tag_manager_install' ) ) :
+function google_tag_manager_install() {
+echo <<< EOT
+<!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NGDMVV"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NGDMVV');</script>
+<!-- End Google Tag Manager -->
+EOT;
+}
+add_action( 'wp_footer', 'google_tag_manager_install' );
+endif;
 // ============================== パブリサイズ共有の文言を変更 ============================================================================= //
 if ( ! function_exists( 'change_jetpack_publicize_content' ) ) :
 function change_jetpack_publicize_content( $post_id, $post ) {
@@ -62,7 +79,7 @@ function dtdsh_load_ogp() {
 	$title = wp_get_document_title();
 	$site_name = get_bloginfo( 'name' );
 	if ( is_singular() ) {
-		$cont = $post->post_content;
+		$desc = dtdsh_the_excerpt( $post->post_content );
 		$url = get_the_permalink();
 		if ( has_post_thumbnail() ) {
 			$img_id = get_post_thumbnail_id();
@@ -77,9 +94,9 @@ function dtdsh_load_ogp() {
 		$url = get_bloginfo( 'url' );
 		$title = $site_name;
 		$img = null;
+		$desc = '弁護士ブログランキングに参加しています！ブログを開いて「弁護士」バナーをポチッと！押していただけると嬉しいです。(^_^)/';
 	}
 	$img = ( $img != null ) ? $img : 'http://www.law-yamashita.com/wp-content/uploads/2015/05/k-yamashita.png';
-	$desc = '弁護士ブログランキングに参加しています！ブログを開いて「弁護士」バナーをポチッと！押していただけると嬉しいです。(^_^)/';
 ?>
 <meta property="og:type" content="<?php echo ( is_singular() ? 'article' : 'website' ); ?>">
 <meta property="og:url" content="<?php echo $url; ?>">
@@ -124,4 +141,16 @@ function dtdsh_html_format( $contents, $on_s = true ) {
 	return $contents;
 }
 // add_filter( 'wp_nav_menu', 'dtdsh_html_format', 10, 2 );
+endif;
+
+// 抜粋
+if ( ! function_exists( 'dtdsh_the_excerpt' ) ) :
+function dtdsh_the_excerpt( $content, $length = 70 ) {
+	$content = preg_replace( '/<!--more-->.+/is', '', $content );
+	$content = strip_shortcodes( $content );
+	$content = strip_tags( $content );
+	$content = str_replace( '&nbsp;', '', $content );
+	$content = mb_substr( $content, 0, $length ) . '...';
+	return $content;
+}
 endif;

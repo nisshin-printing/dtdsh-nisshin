@@ -5,22 +5,22 @@ Plugin URI: http://dtdsh.com/
 Description: 日進印刷株式会社が作成するカスタム設定用のプラグインです。
 Author: 日進印刷株式会社
 Author URI: http://dtdsh.com/
-Text Domain: dtdsh
-Domain Path: /languages/
-Version: 1.0.0
+Version: 1.1.0
 */
 //========================  Define ========================================================================//
-define( 'DTDSH_VERSION', '1.0.0' );
-define( 'DTDSH_REQUIRED_WP_VERSION', '4.5' );
+define( 'DTDSH_VERSION', '1.1.0' );
+define( 'DTDSH_REQUIRED_WP_VERSION', '4.7' );
 define( 'DTDSH_PLUGIN', __FILE__ );
 define( 'DTDSH_HOME_URL', home_url( '/' ) );
 define( 'DTDSH_PLUGIN_DIR', untrailingslashit( dirname( DTDSH_PLUGIN ) ) );
 define( 'DTDSH_PLUGIN_URL', plugin_dir_url( DTDSH_PLUGIN ) );
-define( 'DTDSH_PLUGIN_IMG', DTDSH_PLUGIN_URL . 'assets/img/' );
-define( 'DTDSH_PLUGIN_CSS', DTDSH_PLUGIN_URL . 'assets/css/' );
-define( 'DTDSH_PLUGIN_JS', DTDSH_PLUGIN_URL . 'assets/js/' );
+define( 'DTDSH_PLUGIN_IMG', DTDSH_PLUGIN_DIR . '/img/' );
+define( 'DTDSH_PLUGIN_CSS', DTDSH_PLUGIN_DIR . '/css/' );
+define( 'DTDSH_PLUGIN_JS', DTDSH_PLUGIN_DIR . '/js/' );
 define( 'DTDSH_PLUGIN_INC', DTDSH_PLUGIN_DIR . '/inc/' );
 
+// ==============================      Include Functions     ============================================================================= //
+include( DTDSH_PLUGIN_INC . 'shortcode-home.php' );
 // ============================== Google Tag Manager Install ============================================================================= //
 if ( ! function_exists( 'google_tag_manager_install' ) ) :
 function google_tag_manager_install() {
@@ -65,7 +65,7 @@ function dtd_catch_content_img() {
 	ob_start();
 	ob_end_clean();
 	$output = preg_match_all( '/<img.+src=[\'"]([^\'"]+(?:[jge?g|png]))[\'"].*>/i', $post->post_content, $matches );
-	$first_img = $matches[1][0];
+	$first_img = $matches[1];
 	if ( empty( $first_img ) ) {
 		$first_img = 'none';
 	}
